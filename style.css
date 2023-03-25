@@ -1,14 +1,15 @@
-html {
-  height: 100%;
+html, body {
+	height: 100%;
 }
 
 body {
-	background-image: linear-gradient( #c33764, #1d2671);
-	height: 100%;
+	background-image: linear-gradient( 45deg, #03001e, #7303c0, #ec38bc, #fdeff9);
+	background-size: 200%;
 	font-family: Comic Sans MS, sans-serif;
 	font-size: 32px;
 	line-height: 36px;
 	text-align: center;
+	animation: gradient 15s ease infinite;
 }
 
 footer {
@@ -16,3 +17,17 @@ footer {
   bottom: 20px;
   width: 100%;
 }
+
+@keyframes gradient {
+	0% {
+		background-position: 0 50%;
+	}	
+
+	50% {
+		background-position: 100% 50%;
+	}	
+
+	100% {
+		background-position: 0% 50%;
+	}
+}	
