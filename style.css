@@ -3,7 +3,7 @@ html, body {
 }
 
 body {
-	background-image: linear-gradient(45deg, #03001e, #7303c0, #ec38bc, #fdeff9);
+	background-image: linear-gradient( 45deg, #03001e, #7303c0, #ec38bc, #fdeff9);
 	background-size: 200%;
 	font-family: Comic Sans MS, sans-serif;
 	font-size: 32px;
@@ -11,6 +11,11 @@ body {
 	text-align: center;
 	animation: gradient 15s ease infinite;
 }
+
+h3 {
+	margin-top: 100px;
+}
+
 
 footer {
   position: absolute;
@@ -30,4 +35,4 @@ footer {
 	100% {
 		background-position: 0% 50%;
 	}
-}
+}	
