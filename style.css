@@ -21,6 +21,8 @@ footer {
   position: absolute;
   bottom: 20px;
   width: 100%;
+  font-family: Comic Sans MS, sans-serif;
+  font-size: 24px;
 }
 
 @keyframes gradient {
