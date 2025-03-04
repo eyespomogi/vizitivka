@@ -1,16 +1,71 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-	<title>Візитівка Сушко,Козлов, Мешко</title>
-	<link rel="stylesheet" type="text/css" href="style.css" charset="UTF-8"> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NFC Sound Trigger</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding-top: 50px;
+        }
+    </style>
 </head>
-<body class="tilo">
-	<h1>Золотоніський маслоробний комбінат</h1>
-	<h2>Інформація про підприємство</h2>
-	<p class="info">Код за ЄДРПОУ:00447824<br>Повне найменування:Товариство з додатковою відповідальністю «Золотоніський маслоробний комбінат»<br>Юридична адреса:19700, Черкаська область, місто Золотоноша, вулиця Галини Лисенко, будинок 18<br>Керівник:Генеральний дирекор Решетняк Сергій Андрійович<br>Код території за КОАТУУ:7110400000<br>Дата реєстрації:23.12.1993 року</p>
-	<h3>Вид економічної діяльності</h3>
-	<p class="diia">Код за КВЕД:10.51, 46.33, 46.39, 46.90, 47.11, 47.81<br>Перероблення молока, виробництво масла та сиру; оптова торгівля молочними продуктами, яйцями, харчовими оліями та жирами; неспеціалізована оптова торгівля продуктами харчування, напоями та тютюновими виробами; неспеціалізована оптова торгівля; роздрібна торгівля в неспеціалізованих магазинах переважно продуктами харчування, напоями та тютюновими виробами; роздрібна торгівля з лотків і на ринках харчовими продуктами, напоями та тютюновими виробами.</p>
-	<img src="1.jpeg" class="photo">
-	<footer class="dani">Контактні дані:<br> Номер телефону (04737) 2-15-29<br>Електронна пошта <a href="mailto:zmk_info@milkalliance.com.ua">zmk_info@milkalliance.com.ua</a></footer>
+<body>
+    <h1>Tap NFC Tag to Play Sound</h1>
+    <button id="playButton">Play Sound at Max Volume</button>
+    <audio id="sound" src="smthg.mp3"></audio> <!-- Replace with your audio file -->
+    
+    <script>
+        // Function to play sound and set volume
+        function playSound() {
+            const audio = document.getElementById('sound');
+            audio.volume = 1.0; // Set volume to maximum
+            audio.play().then(() => {
+                console.log('Sound is playing at max volume');
+            }).catch(error => {
+                console.error('Error playing sound:', error);
+            });
+        }
+
+        // NFC functionality (using Web NFC API)
+        if ("NFC" in window) {
+            const playButton = document.getElementById('playButton');
+
+            // Set up NFC tag reading when the page loads
+            window.addEventListener("DOMContentLoaded", () => {
+                if ('NFC' in window) {
+                    console.log('Web NFC is supported!');
+
+                    const nfcReader = new NDEFReader();
+
+                    // Start NFC reading when the page is ready
+                    nfcReader.scan().then(() => {
+                        console.log('NFC scan started.');
+                        nfcReader.onreading = event => {
+                            const tag = event.message.records[0];
+                            const tagData = new TextDecoder().decode(tag.data);
+                            console.log('NFC tag data:', tagData);
+
+                            // Example condition: if tag data matches, play sound
+                            if (tagData === 'PlaySoundTag') {
+                                playSound();
+                            }
+                        };
+                    }).catch(error => {
+                        console.error('NFC scan failed:', error);
+                    });
+                } else {
+                    console.log('Web NFC is not supported on this device/browser.');
+                }
+            });
+
+            // Button fallback (for devices that don't support NFC)
+            playButton.addEventListener('click', playSound);
+        } else {
+            console.log('NFC is not supported by your browser');
+        }
+    </script>
 </body>
 </html>
