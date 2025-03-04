@@ -1,86 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uk">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NFC Sound Trigger</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding-top: 50px;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-    </style>
+    <title>Автовідтворення звуку</title>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const audio = new Audio("sound.mp3"); // Замініть на реальний файл
+            audio.volume = 1.0; // Максимальна гучність
+            audio.loop = true; // Безперервне відтворення
+            
+            const playAudio = () => {
+                audio.play().catch(error => console.error("Помилка відтворення:", error));
+                document.removeEventListener("click", playAudio);
+            };
+            
+            document.addEventListener("click", playAudio);
+        });
+    </script>
 </head>
 <body>
-    <h1>Tap NFC Tag to Play Sound</h1>
-    <button id="enable-sound">Enable Sound</button>
-    <p id="status">Waiting for NFC...</p>
-    
-    <audio id="sound" src="smthg.mp3"></audio> <!-- Заміни на реальний шлях до аудіофайлу -->
-
-    <script>
-        let nfcReader; // Глобальна змінна для зчитувача NFC
-
-        function playSound() {
-            const audio = document.getElementById('sound');
-            console.log('Attempting to play sound...');
-            audio.volume = 1.0;
-
-            audio.play().then(() => {
-                console.log('Sound is playing at max volume');
-                document.getElementById('status').textContent = 'Sound playing!';
-            }).catch(error => {
-                console.error('Error playing sound:', error);
-                document.getElementById('status').textContent = 'Error: Cannot play sound.';
-            });
-        }
-
-        document.getElementById('enable-sound').addEventListener('click', () => {
-            const audio = document.getElementById('sound');
-            audio.play().then(() => {
-                audio.pause(); // Зупиняємо, щоб дозволити подальший автоплей
-                console.log('Audio enabled');
-                document.getElementById('status').textContent = 'NFC scanning...';
-                startNFC();
-            }).catch(error => {
-                console.error('Error enabling sound:', error);
-                document.getElementById('status').textContent = 'Please allow audio playback.';
-            });
-        });
-
-        function startNFC() {
-            if ('NDEFReader' in window) {
-                nfcReader = new NDEFReader();
-                nfcReader.scan().then(() => {
-                    console.log('NFC scan started.');
-                    document.getElementById('status').textContent = 'Tap an NFC tag...';
-
-                    nfcReader.onreading = event => {
-                        const tag = event.message.records[0];
-                        const tagData = new TextDecoder().decode(tag.data);
-                        console.log('NFC tag data:', tagData);
-
-                        if (tagData === 'PlaySoundTag') {
-                            playSound();
-                        } else {
-                            document.getElementById('status').textContent = 'Unrecognized NFC tag';
-                        }
-                    };
-                }).catch(error => {
-                    console.error('NFC scan failed:', error);
-                    document.getElementById('status').textContent = 'NFC scan failed.';
-                });
-            } else {
-                console.log('Web NFC is not supported on this device/browser.');
-                document.getElementById('status').textContent = 'NFC not supported in this browser.';
-            }
-        }
-    </script>
+    <h1>Клацніть, щоб увімкнути звук</h1>
 </body>
 </html>
