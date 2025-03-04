@@ -5,21 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Автовідтворення звуку</title>
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
+        document.addEventListener("DOMContentLoaded", async () => {
+            if (!("NDEFReader" in window)) {
+                alert("Ваш браузер не підтримує Web NFC");
+                return;
+            }
+            
             const audio = new Audio("sound.mp3"); // Замініть на реальний файл
-            audio.volume = 1.0; // Максимальна гучність
-            audio.loop = true; // Безперервне відтворення
+            audio.volume = 1.0;
+            audio.loop = true;
             
-            const playAudio = () => {
-                audio.play().catch(error => console.error("Помилка відтворення:", error));
-                document.removeEventListener("click", playAudio);
-            };
-            
-            document.addEventListener("click", playAudio);
+            try {
+                const nfcReader = new NDEFReader();
+                await nfcReader.scan();
+                
+                nfcReader.onreading = event => {
+                    console.log("NFC-тег зчитано", event); // Логування зчитування
+                    audio.play().catch(error => console.error("Помилка відтворення:", error));
+                };
+                
+            } catch (error) {
+                console.error("Помилка доступу до NFC:", error);
+            }
         });
     </script>
 </head>
 <body>
-    <h1>Клацніть, щоб увімкнути звук</h1>
+    <h1>Піднесіть NFC-тег для запуску звуку</h1>
 </body>
 </html>
