@@ -14,7 +14,6 @@
 </head>
 <body>
     <h1>Tap NFC Tag to Play Sound</h1>
-    <button id="playButton">Play Sound at Max Volume</button>
     <audio id="sound" src="smthg.mp3"></audio> <!-- Replace with your audio file -->
     
     <script>
@@ -31,8 +30,6 @@
 
         // NFC functionality (using Web NFC API)
         if ("NFC" in window) {
-            const playButton = document.getElementById('playButton');
-
             // Set up NFC tag reading when the page loads
             window.addEventListener("DOMContentLoaded", () => {
                 if ('NFC' in window) {
@@ -60,9 +57,6 @@
                     console.log('Web NFC is not supported on this device/browser.');
                 }
             });
-
-            // Button fallback (for devices that don't support NFC)
-            playButton.addEventListener('click', playSound);
         } else {
             console.log('NFC is not supported by your browser');
         }
