@@ -10,55 +10,76 @@
             text-align: center;
             padding-top: 50px;
         }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
     <h1>Tap NFC Tag to Play Sound</h1>
-    <audio id="sound" src="smthg.mp3"></audio> <!-- Replace with your audio file -->
+    <button id="enable-sound">Enable Sound</button>
+    <p id="status">Waiting for NFC...</p>
     
+    <audio id="sound" src="smthg.mp3"></audio> <!-- Заміни на реальний шлях до аудіофайлу -->
+
     <script>
-        // Function to play sound and set volume
+        let nfcReader; // Глобальна змінна для зчитувача NFC
+
         function playSound() {
             const audio = document.getElementById('sound');
-            audio.volume = 1.0; // Set volume to maximum
+            console.log('Attempting to play sound...');
+            audio.volume = 1.0;
+
             audio.play().then(() => {
                 console.log('Sound is playing at max volume');
+                document.getElementById('status').textContent = 'Sound playing!';
             }).catch(error => {
                 console.error('Error playing sound:', error);
+                document.getElementById('status').textContent = 'Error: Cannot play sound.';
             });
         }
 
-        // NFC functionality (using Web NFC API)
-        if ("NFC" in window) {
-            // Set up NFC tag reading when the page loads
-            window.addEventListener("DOMContentLoaded", () => {
-                if ('NFC' in window) {
-                    console.log('Web NFC is supported!');
-
-                    const nfcReader = new NDEFReader();
-
-                    // Start NFC reading when the page is ready
-                    nfcReader.scan().then(() => {
-                        console.log('NFC scan started.');
-                        nfcReader.onreading = event => {
-                            const tag = event.message.records[0];
-                            const tagData = new TextDecoder().decode(tag.data);
-                            console.log('NFC tag data:', tagData);
-
-                            // Example condition: if tag data matches, play sound
-                            if (tagData === 'PlaySoundTag') {
-                                playSound();
-                            }
-                        };
-                    }).catch(error => {
-                        console.error('NFC scan failed:', error);
-                    });
-                } else {
-                    console.log('Web NFC is not supported on this device/browser.');
-                }
+        document.getElementById('enable-sound').addEventListener('click', () => {
+            const audio = document.getElementById('sound');
+            audio.play().then(() => {
+                audio.pause(); // Зупиняємо, щоб дозволити подальший автоплей
+                console.log('Audio enabled');
+                document.getElementById('status').textContent = 'NFC scanning...';
+                startNFC();
+            }).catch(error => {
+                console.error('Error enabling sound:', error);
+                document.getElementById('status').textContent = 'Please allow audio playback.';
             });
-        } else {
-            console.log('NFC is not supported by your browser');
+        });
+
+        function startNFC() {
+            if ('NDEFReader' in window) {
+                nfcReader = new NDEFReader();
+                nfcReader.scan().then(() => {
+                    console.log('NFC scan started.');
+                    document.getElementById('status').textContent = 'Tap an NFC tag...';
+
+                    nfcReader.onreading = event => {
+                        const tag = event.message.records[0];
+                        const tagData = new TextDecoder().decode(tag.data);
+                        console.log('NFC tag data:', tagData);
+
+                        if (tagData === 'PlaySoundTag') {
+                            playSound();
+                        } else {
+                            document.getElementById('status').textContent = 'Unrecognized NFC tag';
+                        }
+                    };
+                }).catch(error => {
+                    console.error('NFC scan failed:', error);
+                    document.getElementById('status').textContent = 'NFC scan failed.';
+                });
+            } else {
+                console.log('Web NFC is not supported on this device/browser.');
+                document.getElementById('status').textContent = 'NFC not supported in this browser.';
+            }
         }
     </script>
 </body>
